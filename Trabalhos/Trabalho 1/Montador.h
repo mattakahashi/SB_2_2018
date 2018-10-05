@@ -24,7 +24,8 @@ public:
 	pre_processamento(); // Chama Construtor da Classe
 	~pre_processamento(); // Destrutor da Classe
 	void leitura(string ArquivoEntrada);
-	vector<string> pegar_tokens(string linha, int numero_linha);
+	vector<string> pegar_tokens(string linha);
+	//map<string,int> pegaLinha(vector<string> v, int numero_linha);
 	string Remover_Comentarios(string comment); // Chama Método Remover_Comentarios
 	string NaoSensivelAoCaso(string frase);
 	string Transforma_para_String(int numero);
@@ -39,7 +40,7 @@ private:
 	string linha;
 	string frase, ArquivoEntrada, ArquivoPre, ArquivoOBJ;
 	int nlinha,IF1,linha_equ;
-	bool EQU_FLAG, ERRO_FLAG;
+	bool EQU_FLAG, ERRO_FLAG,COPY_SEM_ESPACO;
 };
 
 class primeira_passagem

@@ -9,7 +9,9 @@ OUTPUT N1
 if TAM2
 OuTPUT N2
 S:
- Copy N, ONe
+ Copy N,ONe
+
+Copy N, ONe
 STOP
 SECTION DATA
 N1: SPACE

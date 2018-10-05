@@ -19,6 +19,7 @@ pre_processamento::pre_processamento()
 {
  	EQU_FLAG = false;
     ERRO_FLAG = false;
+    COPY_SEM_ESPACO = false;
 	nlinha= 0;
 	linha_equ = 0;
 	IF1 =0;
@@ -91,7 +92,7 @@ void pre_processamento::leitura(string ArquivoEntrada)
                 nlinha++;
                 frase = Remover_Comentarios(frase); // Retira comentários das linhas do arquivo
                 frase = NaoSensivelAoCaso(frase); // Transforma todas strings para Maiuscula
-                buffer_tokens = pegar_tokens(frase, nlinha); // Pega os tokens de 1 linha
+                buffer_tokens = pegar_tokens(frase); // Pega os tokens de 1 linha
 
 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
@@ -107,6 +108,12 @@ void pre_processamento::leitura(string ArquivoEntrada)
                             buffer_completo.push_back(buffer_tokens[i]);                            
                             buffer_completo.push_back(A);
                             buffer_completo.push_back(B);
+
+                            size_t teste_copy = B.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXZ,._");
+                            if(teste_copy != string::npos)
+                            {                                
+                                COPY_SEM_ESPACO =true;                                
+                            }
 
                             i++;
 
@@ -251,8 +258,18 @@ void pre_processamento::leitura(string ArquivoEntrada)
 
                             else if(buffer_completo[i+1].compare(COPY) == 0)
                             {
-                                saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<","<<buffer_completo[i+3]<<endl;
-                                i = i+3;
+                                if(COPY_SEM_ESPACO==true)
+                                {
+                                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<","<<buffer_completo[i+3]<<endl;
+                                    i = i+3;
+                                    COPY_SEM_ESPACO = false;
+                                }
+                                else
+                                {
+                                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<", "<<buffer_completo[i+4]<<endl;
+                                    i = i+3;
+                                }
+                                
                             }
                         }
                     }
@@ -260,8 +277,19 @@ void pre_processamento::leitura(string ArquivoEntrada)
                 
                 if(buffer_completo[i].compare(COPY) == 0)
                 {
-                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<", "<<buffer_completo[i+3]<<endl;
-                    i = i+2;
+                    
+                    if(COPY_SEM_ESPACO==true)
+                    {
+                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<","<<buffer_completo[i+2]<<endl;
+                        i = i+2;
+                        COPY_SEM_ESPACO = false;
+                    }
+                    else
+                    {
+                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<", "<<buffer_completo[i+3]<<endl;
+                        i = i+2;
+                    }
+
                 }
 
                 else if((buffer_completo[i].compare(SECTION) ==0)||(buffer_completo[i].compare(INPUT) ==0)||(buffer_completo[i].compare(ADD) ==0)||(buffer_completo[i].compare(SUB) ==0)||(buffer_completo[i].compare(MULT) ==0)||(buffer_completo[i].compare(DIV) ==0)||(buffer_completo[i].compare(JMP) ==0)||(buffer_completo[i].compare(JMPN) ==0)||(buffer_completo[i].compare(JMPZ) ==0)||(buffer_completo[i].compare(JMPP) ==0)||(buffer_completo[i].compare(LOAD) ==0)||(buffer_completo[i].compare(STORE) ==0)||(buffer_completo[i].compare(OUTPUT) ==0))
@@ -299,7 +327,7 @@ void pre_processamento::leitura(string ArquivoEntrada)
 }
 
 // Método para Pegar os tokens de cada linha
-vector<string> pre_processamento::pegar_tokens(string linha, int numero_linha)
+vector<string> pre_processamento::pegar_tokens(string linha)
 {
     string frase;
     stringstream ss(linha);
@@ -313,6 +341,18 @@ vector<string> pre_processamento::pegar_tokens(string linha, int numero_linha)
     return(buffer_tokens);
 }
 
+/*map<string, int> pre_processamento::pegaLinha(vector<string> v, int numero_linha)
+{
+   
+    int num_linha;
+    string teste;
+    num_linha =numero_linha;
+    vector<string> buffer_tokens;
+    map<string, int>tabela_tokens;    
+
+
+    return(buffer_tokens,num_linha);
+}*/
 // Método para Remover comentários
 string pre_processamento::Remover_Comentarios(string frase)
 {
