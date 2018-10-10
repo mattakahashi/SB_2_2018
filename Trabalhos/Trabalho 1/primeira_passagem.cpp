@@ -23,6 +23,7 @@ primeira_passagem::primeira_passagem()
     ERRO_NO_TEXT = true;
     ERRO_NO_DATA = true;
     ERRO_COPY =false;
+    ERRO_INVALID_SECTION =false;
     nlinha= 0; 
     linha_text = 0;
     linha_data = 0;
@@ -93,8 +94,9 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                 nlinha++;
                 frase = pre->Remover_Comentarios(frase); // Retira comentários das linhas do arquivo
                 frase = pre->NaoSensivelAoCaso(frase); // Transforma todas strings para Maiuscula
-                buffer_tokens = pegar_tokens(frase, nlinha);
-             
+                buffer_tokens = pre->pegar_tokens(frase);
+                tabela_tokens = pre->pegaLinha(frase,nlinha);
+
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
                 {
                     /////////////////// Separa os Tokens no caso do COPY//////////////////////////// Ainda não trata casos do COPY estar escrito diferente do que foi especificado
@@ -112,7 +114,8 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                             size_t teste_copy = B.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXZ,._");
                             if(teste_copy != string::npos)
                             {                                
-                                ERRO_COPY =true;                                
+                                ERRO_COPY =true;    
+                                linha_cop.push_back(pre->Transforma_para_String(nlinha));                            
                             }
 
                             i++;
@@ -122,12 +125,32 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                     else
                     {
                         buffer_completo.push_back(buffer_tokens[i]);    
-                    }  
+                    } 
+                    
+                    if(buffer_tokens[i].compare(SECTION)==0)
+                    {
+                        if((buffer_tokens[i+1].compare(TEXT)==1) || (buffer_tokens[i+1].compare(DATA)==1)|| (buffer_tokens[i+1].compare(BSS)==1))
+                        {
+                            ERRO_INVALID_SECTION= true;
+                            linha_invalid_section.push_back(pre->Transforma_para_String(nlinha));
+                        }
+                    } 
                 }
             }
-        }
 
-        
+            if(tabela_tokens.count("DATA")>0){      // analisa se o string existe na tabela de instruções.
+                
+                linha_data = tabela_tokens["DATA"];
+            }
+            if(tabela_tokens.count("TEXT")>0){      // analisa se o string existe na tabela de instruções.
+              
+                linha_text = tabela_tokens["TEXT"];
+            }
+            if(tabela_tokens.count("BSS")>0){      // analisa se o string existe na tabela de instruções.
+               
+                linha_bss = tabela_tokens["BSS"];
+            }
+        }        
         
         ///////////////////////////////////// Analisa Sections //////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,8 +181,8 @@ void primeira_passagem::leitura(string ArquivoEntrada)
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
-        cout<<linha_text<<endl;
-        cout<<linha_data<<endl;
+        //cout<<linha_text<<endl;
+        //cout<<linha_data<<endl;
         //cout<<linha_bss<<endl;
         /*for(unsigned int i=0;i<buffer_completo.size();++i)
         {
@@ -196,9 +219,21 @@ void primeira_passagem::leitura(string ArquivoEntrada)
 
     if(ERRO_COPY == true)
     {
-        cout<<"Erro semântico na linha "<<linha_cop<<". Erro na chamada a instrução COPY."<<endl;
-        ERRO_FLAG =true;
+        for(unsigned int i; i<linha_cop.size();i++)
+        {
+            cout<<"Erro semântico na linha "<<pre->Transforma_para_int(linha_cop[i])<<". Erro na chamada a instrução COPY."<<endl;
+            ERRO_FLAG =true;
+        }
         
+    }
+
+    if(ERRO_INVALID_SECTION ==true)
+    {
+        for(unsigned int i; i<linha_invalid_section.size();i++)
+        {
+            cout<<"Erro sintático na linha "<<pre->Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
+            ERRO_FLAG =true;
+        }
     }
     
     if(ERRO_FLAG == false)
@@ -207,43 +242,5 @@ void primeira_passagem::leitura(string ArquivoEntrada)
         
         segunda->leitura(ArquivoPre);
     }
-}
-
-// Método para Pegar os tokens de cada linha
-vector<string>primeira_passagem::pegar_tokens(string linha, int numero_linha)
-{
-    string frase;
-    string TEXT("TEXT");
-    string COPY("COPY");
-    string DATA("DATA");
-    string BSS("BSS");
-    stringstream ss(linha);
-    vector<string> buffer_tokens;
- 
-    while (ss >> frase)
-    {
-        buffer_tokens.push_back(frase);
-        if(frase.compare(TEXT)==0)
-        {
-            linha_text = numero_linha;
-        }
-
-        if(frase.compare(DATA)==0)
-        {
-            linha_data = numero_linha;
-        }
-
-        if(frase.compare(BSS)==0)
-        {
-            linha_bss = numero_linha;
-        }
-
-        if(frase.compare(COPY)==0)
-        {
-            linha_cop = numero_linha;
-        }
-
-    }
- 
-    return(buffer_tokens);
+    //cout<<linha_data<<endl;
 }

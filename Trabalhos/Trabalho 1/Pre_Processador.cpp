@@ -93,6 +93,7 @@ void pre_processamento::leitura(string ArquivoEntrada)
                 frase = Remover_Comentarios(frase); // Retira comentários das linhas do arquivo
                 frase = NaoSensivelAoCaso(frase); // Transforma todas strings para Maiuscula
                 buffer_tokens = pegar_tokens(frase); // Pega os tokens de 1 linha
+                tabela_tokens = pegaLinha(frase,nlinha);
 
 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
@@ -311,7 +312,12 @@ void pre_processamento::leitura(string ArquivoEntrada)
   
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
-        
+            
+       
+    if(tabela_tokens.count("SECTION")>0)
+    {
+        cout<<tabela_tokens["SECTION"]<<endl;
+    }
       
         /*for(unsigned int i=0;i<buffer_completo.size();++i)
         {
@@ -336,23 +342,25 @@ vector<string> pre_processamento::pegar_tokens(string linha)
     while (ss >> frase)
     {
         buffer_tokens.push_back(frase);
+        
     }
  
     return(buffer_tokens);
 }
 
-/*map<string, int> pre_processamento::pegaLinha(vector<string> v, int numero_linha)
+map<string, int> pre_processamento::pegaLinha(string linha, int numero_linha)
 {
-   
-    int num_linha;
-    string teste;
-    num_linha =numero_linha;
-    vector<string> buffer_tokens;
-    map<string, int>tabela_tokens;    
+    string frase;
+    stringstream ss(linha);
+    map<string, int>tabela_tokens; 
+ 
+    while (ss >> frase)
+    { 
+        tabela_tokens.insert(make_pair(frase,numero_linha));       
+    }
 
-
-    return(buffer_tokens,num_linha);
-}*/
+    return tabela_tokens;
+}
 // Método para Remover comentários
 string pre_processamento::Remover_Comentarios(string frase)
 {

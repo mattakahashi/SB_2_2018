@@ -25,7 +25,7 @@ public:
 	~pre_processamento(); // Destrutor da Classe
 	void leitura(string ArquivoEntrada);
 	vector<string> pegar_tokens(string linha);
-	//map<string,int> pegaLinha(vector<string> v, int numero_linha);
+	map<string,int> pegaLinha(string linha, int numero_linha);
 	string Remover_Comentarios(string comment); // Chama Método Remover_Comentarios
 	string NaoSensivelAoCaso(string frase);
 	string Transforma_para_String(int numero);
@@ -36,6 +36,7 @@ public:
 	
 	
 private:
+	map<string,int>tabela_tokens;
 	vector<string>  buffer_tokens, buffer_rotulo, Nome_Rot_EQU, Valor_EQU, buffer_completo;
 	string linha;
 	string frase, ArquivoEntrada, ArquivoPre, ArquivoOBJ;
@@ -50,16 +51,16 @@ public:
 	primeira_passagem(); // Chama Construtor da Classe
 	~primeira_passagem(); // Destrutor da Classe
 	void leitura(string ArquivoEntrada);
-	vector<string> pegar_tokens(string linha, int numero_linha);	
 
 	
 	
 private:
-	vector<string>  buffer_tokens, buffer_rotulo, Nome_Rot_EQU, Valor_EQU, buffer_completo;
+	map<string,int>tabela_tokens;
+	vector<string>  buffer_tokens, buffer_rotulo, Nome_Rot_EQU, Valor_EQU, buffer_completo,linha_cop, linha_invalid_section;
 	string linha;
 	string frase, ArquivoPre;
-	int nlinha,linha_text, linha_data,linha_bss,linha_cop;
-	bool EQU_FLAG, ERRO_FLAG, Erro_Flag_TEXT, ERRO_NO_TEXT, ERRO_NO_DATA, ERRO_COPY;
+	int nlinha,linha_text, linha_data,linha_bss;
+	bool EQU_FLAG, ERRO_FLAG, Erro_Flag_TEXT, ERRO_NO_TEXT, ERRO_NO_DATA, ERRO_COPY,ERRO_INVALID_SECTION;
 };
 
 //Define a Classe Pre_Processamento
