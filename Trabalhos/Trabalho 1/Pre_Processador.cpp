@@ -2,9 +2,7 @@
 //////////////////////////////////////////////////////////////// Classe pre_processamento /////////////////////////////////////////////////////////////////////////////////////////
 
 Classe responsável pelo pre-processamento do arquivo .asm. Recebe como argumento o nome deste arquivo, o abre e faz a leitura de linha por linha. Retira os comentários do arquivo,
-deixa todos caracteres em letra maiúscula (Montador não sensível ao caso), separa os caracteres em tokens, detecta se há alguma diretiva EQU e IF e as trata, detecta a diretiva
-MACRO e substitui seu código ao há chamada dessa diretiva.
-
+deixa todos caracteres em letra maiúscula (Montador não sensível ao caso), separa os caracteres em tokens, detecta se há alguma diretiva EQU e IF e as trata,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 */
@@ -93,7 +91,6 @@ void pre_processamento::leitura(string ArquivoEntrada)
                 frase = Remover_Comentarios(frase); // Retira comentários das linhas do arquivo
                 frase = NaoSensivelAoCaso(frase); // Transforma todas strings para Maiuscula
                 buffer_tokens = pegar_tokens(frase); // Pega os tokens de 1 linha
-                tabela_tokens = pegaLinha(frase,nlinha);
 
 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
@@ -313,11 +310,6 @@ void pre_processamento::leitura(string ArquivoEntrada)
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
             
-       
-    if(tabela_tokens.count("SECTION")>0)
-    {
-        cout<<tabela_tokens["SECTION"]<<endl;
-    }
       
         /*for(unsigned int i=0;i<buffer_completo.size();++i)
         {

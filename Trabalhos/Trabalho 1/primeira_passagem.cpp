@@ -1,9 +1,7 @@
 /*
-//////////////////////////////////////////////////////////////// Classe pre_processamento /////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////// Classe primeira_passagem /////////////////////////////////////////////////////////////////////////////////////////
 
-Classe responsável pelo pre-processamento do arquivo .asm. Recebe como argumento o nome deste arquivo, o abre e faz a leitura de linha por linha. Retira os comentários do arquivo,
-deixa todos caracteres em letra maiúscula (Montador não sensível ao caso), separa os caracteres em tokens, detecta se há alguma diretiva EQU e IF e as trata, detecta a diretiva
-MACRO e substitui seu código ao há chamada dessa diretiva.
+Classe responsável pelo detecção de erros do arquivo .asm e a criação do arquivo pre-processado. 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +36,7 @@ primeira_passagem::~primeira_passagem()
  
 }
 
-// Método de Leitura do arquivo .asm, manipulação deste arquivo e tratamento das diretivas IF e EQU
+// Método de Leitura do arquivo .asm e detecção de erros no processo de montagem do código.
 void primeira_passagem::leitura(string ArquivoEntrada)
 {
     ////////////////////////////////////// Declaração de Variáveis /////////////////////////////////////////////////////////
@@ -99,7 +97,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
                 {
-                    /////////////////// Separa os Tokens no caso do COPY//////////////////////////// Ainda não trata casos do COPY estar escrito diferente do que foi especificado
+                    /////////////////// Separa os Tokens no caso do COPY////////////////////////////
                     if ((buffer_tokens[i].compare(COPY) == 0))
                     {
                         size_t virgula = buffer_tokens[i+1].find(",");
@@ -135,6 +133,8 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                             linha_invalid_section.push_back(pre->Transforma_para_String(nlinha));
                         }
                     } 
+
+                    
                 }
             }
 
