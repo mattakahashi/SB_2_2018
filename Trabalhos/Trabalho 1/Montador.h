@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 #include <vector>
 #include <string>
@@ -30,6 +31,7 @@ public:
 	string NaoSensivelAoCaso(string frase);// Método que transforma todos caracteres do arquivo para somente um tipo de case
 	string Transforma_para_String(int numero);// Método que transforma um int para string
 	int Transforma_para_int(string vetor);// Método que transforma uma string para int
+	int converte_hexa(string hexa); // Método que transforma a CONST escrita em hexadecimal para decimal
 
 	
 	

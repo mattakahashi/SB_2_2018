@@ -193,6 +193,20 @@ void pre_processamento::leitura(string ArquivoEntrada)
                 }
                 IF1 =0; 
 
+                //////////////////////// Troca valores da diretiva CONST/////////////////////////////////////////////////////
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                for(unsigned int i = 0; i<buffer_completo.size();i++)
+                {
+                    if(buffer_completo[i].compare(CONST)==0)
+                    {
+                        size_t hexa = buffer_completo[i+1].find_first_of("X");
+                        if(hexa!=string::npos)
+                        {
+                            buffer_completo[i+1]= Transforma_para_String(converte_hexa((buffer_completo[i+1])));
+                        }
+                    }
+                }
+
             }
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -391,4 +405,13 @@ string pre_processamento::Transforma_para_String(int numero)
 int pre_processamento::Transforma_para_int(string vetor)
 {
     return(atoi(vetor.c_str()));
+}
+
+int pre_processamento::converte_hexa(string hexa)
+{
+    int aux;
+    stringstream ss;
+    ss<<hexa;
+    ss>>std::hex>>aux;
+    return(aux);
 }
