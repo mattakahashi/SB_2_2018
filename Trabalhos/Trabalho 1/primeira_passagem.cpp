@@ -113,7 +113,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                             if(teste_copy != string::npos)
                             {                                
                                 ERRO_COPY =true;    
-                                linha_cop.push_back(pre->Transforma_para_String(nlinha));                            
+                                linha_cop.push_back(Transforma_para_String(nlinha));                            
                             }
 
                             i++;
@@ -130,7 +130,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                         if((buffer_tokens[i+1].compare(TEXT)==1) || (buffer_tokens[i+1].compare(DATA)==1)|| (buffer_tokens[i+1].compare(BSS)==1))
                         {
                             ERRO_INVALID_SECTION= true;
-                            linha_invalid_section.push_back(pre->Transforma_para_String(nlinha));
+                            linha_invalid_section.push_back(Transforma_para_String(nlinha));
                         }
                     } 
 
@@ -179,6 +179,19 @@ void primeira_passagem::leitura(string ArquivoEntrada)
 
             }
         }
+        //////////////////////// Troca valores da diretiva CONST/////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        for(unsigned int i = 0; i<buffer_completo.size();i++)
+        {
+            if(buffer_completo[i].compare(CONST)==0)
+            {
+                size_t hexa = buffer_completo[i+1].find_first_of("X");
+                if(hexa!=string::npos)
+                {
+                    buffer_completo[i+1]= Transforma_para_String(converte_hexa((buffer_completo[i+1])));
+                }
+            }
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
         //cout<<linha_text<<endl;
@@ -221,7 +234,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
     {
         for(unsigned int i; i<linha_cop.size();i++)
         {
-            cout<<"Erro semântico na linha "<<pre->Transforma_para_int(linha_cop[i])<<". Erro na chamada a instrução COPY."<<endl;
+            cout<<"Erro semântico na linha "<<Transforma_para_int(linha_cop[i])<<". Erro na chamada a instrução COPY."<<endl;
             ERRO_FLAG =true;
         }
         
@@ -231,7 +244,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
     {
         for(unsigned int i; i<linha_invalid_section.size();i++)
         {
-            cout<<"Erro sintático na linha "<<pre->Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
+            cout<<"Erro sintático na linha "<<Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
             ERRO_FLAG =true;
         }
     }
@@ -243,4 +256,26 @@ void primeira_passagem::leitura(string ArquivoEntrada)
         segunda->leitura(ArquivoPre);
     }
     //cout<<linha_data<<endl;
+}
+
+int primeira_passagem::converte_hexa(string hexa)
+{
+    int aux;
+    stringstream ss;
+    ss<<hexa;
+    ss>>std::hex>>aux;
+    return(aux);
+}
+//Método para transformar int para string
+string primeira_passagem::Transforma_para_String(int numero)
+{
+     ostringstream ss;
+     ss << numero;
+
+     return ss.str();
+}
+// Método para transformar string para int
+int primeira_passagem::Transforma_para_int(string vetor)
+{
+    return(atoi(vetor.c_str()));
 }

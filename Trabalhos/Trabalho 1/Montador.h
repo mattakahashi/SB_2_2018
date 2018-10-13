@@ -29,10 +29,7 @@ public:
 	map<string,int> pegaLinha(string linha, int numero_linha);// Método que retorna a linha em que cada token foi referenciado
 	string Remover_Comentarios(string comment); // Chama Método Remover_Comentarios
 	string NaoSensivelAoCaso(string frase);// Método que transforma todos caracteres do arquivo para somente um tipo de case
-	string Transforma_para_String(int numero);// Método que transforma um int para string
-	int Transforma_para_int(string vetor);// Método que transforma uma string para int
-	int converte_hexa(string hexa); // Método que transforma a CONST escrita em hexadecimal para decimal
-
+	
 	
 	
 private:
@@ -51,6 +48,11 @@ public:
 	primeira_passagem(); // Chama Construtor da Classe
 	~primeira_passagem(); // Destrutor da Classe
 	void leitura(string ArquivoEntrada); // Método responsável pela leitura do arquivo .asm e tratamento de erros no processo de montagem
+	int converte_hexa(string hexa); // Método que transforma a CONST escrita em hexadecimal para decimal
+	string Transforma_para_String(int numero);// Método que transforma um int para string
+	int Transforma_para_int(string vetor);// Método que transforma uma string para int
+	
+
 
 	
 	

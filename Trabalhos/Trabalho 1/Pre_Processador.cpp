@@ -192,21 +192,6 @@ void pre_processamento::leitura(string ArquivoEntrada)
                     }
                 }
                 IF1 =0; 
-
-                //////////////////////// Troca valores da diretiva CONST/////////////////////////////////////////////////////
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                for(unsigned int i = 0; i<buffer_completo.size();i++)
-                {
-                    if(buffer_completo[i].compare(CONST)==0)
-                    {
-                        size_t hexa = buffer_completo[i+1].find_first_of("X");
-                        if(hexa!=string::npos)
-                        {
-                            buffer_completo[i+1]= Transforma_para_String(converte_hexa((buffer_completo[i+1])));
-                        }
-                    }
-                }
-
             }
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +234,8 @@ void pre_processamento::leitura(string ArquivoEntrada)
                             
                             else if((buffer_completo[i+1].compare(SPACE) ==0))
                             {
-                                if(rot_space_comp!= (buffer_rotulo[j+1]))
+                                
+                                if((rot_space_comp!= (buffer_rotulo[j+1])) && (buffer_completo[i+2].compare(SECTION)!=0))
                                 {
                                     saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<endl;
                                     i = i+2;
@@ -325,7 +311,7 @@ void pre_processamento::leitura(string ArquivoEntrada)
         ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
             
       
-        /*for(unsigned int i=0;i<buffer_completo.size();++i)
+       /* for(unsigned int i=0;i<buffer_completo.size();++i)
         {
             //size_t tamanho_token = buffer_completo[i].length();
             //csaida_pre<<tamanho_token<<endl;
@@ -393,25 +379,3 @@ string pre_processamento::NaoSensivelAoCaso(string frase)
     return(frase);
 }
 
-//Método para transformar int para string
-string pre_processamento::Transforma_para_String(int numero)
-{
-     ostringstream ss;
-     ss << numero;
-
-     return ss.str();
-}
-// Método para transformar string para int
-int pre_processamento::Transforma_para_int(string vetor)
-{
-    return(atoi(vetor.c_str()));
-}
-
-int pre_processamento::converte_hexa(string hexa)
-{
-    int aux;
-    stringstream ss;
-    ss<<hexa;
-    ss>>std::hex>>aux;
-    return(aux);
-}
