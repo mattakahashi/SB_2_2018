@@ -18,6 +18,8 @@ pre_processamento::pre_processamento()
  	EQU_FLAG = false;
     ERRO_FLAG = false;
     COPY_SEM_ESPACO = false;
+    flagCopyArg1TrueArg2False = false;
+    flagCopyArg1FalseArg2True = false;
 	nlinha= 0;
 	linha_equ = 0;
 	IF1 =0;
@@ -95,27 +97,105 @@ void pre_processamento::leitura(string ArquivoEntrada)
 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
                 {
+                    
                     /////////////////// Separa os Tokens no caso do COPY//////////////////////////// Ainda não trata casos do COPY estar escrito diferente do que foi especificado
                     if ((buffer_tokens[i].compare(COPY) == 0))
                     {
+                        size_t vec_arg1_ok = buffer_tokens[i+2].find("+");
+                        size_t vec_arg1_ok_arg2_ok = buffer_tokens[i+5].find("+");
+                        size_t vec_arg2_ok = buffer_tokens[i+3].find("+");
                         size_t virgula = buffer_tokens[i+1].find(",");
-                        if(virgula != string::npos)
+                        size_t virgula_vetor = buffer_tokens[i+3].find(",");
+
+                        if(vec_arg1_ok != string::npos)
                         {
-                            string A = buffer_tokens[i+1].substr(0, virgula); //Primeiro token do copy
-                            string B = buffer_tokens[i+1].substr(virgula+1,string::npos); //Segundo token do copy
-                            buffer_completo.push_back(buffer_tokens[i]);                            
-                            buffer_completo.push_back(A);
-                            buffer_completo.push_back(B);
+                            if(virgula_vetor != string::npos)
+                            {
 
-                            size_t teste_copy = B.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXZ,._");
-                            if(teste_copy != string::npos)
-                            {                                
-                                COPY_SEM_ESPACO =true;                                
+                                
+                                if(vec_arg1_ok_arg2_ok!=string::npos)
+                                {
+                                    string A = buffer_tokens[i+1];
+                                    string B = buffer_tokens[i+2];
+                                    string C = buffer_tokens[i+3].substr(0,virgula_vetor);
+                                    string D= buffer_tokens[i+4];
+                                    string E = buffer_tokens[i+5];
+                                    string F = buffer_tokens[i+6];
+                                    buffer_completo.push_back(buffer_tokens[i]);                            
+                                    buffer_completo.push_back(A);
+                                    buffer_completo.push_back(B);
+                                    buffer_completo.push_back(C);                            
+                                    buffer_completo.push_back(D);
+                                    buffer_completo.push_back(E);
+                                    buffer_completo.push_back(F);
+                                    i = i+6; 
+                                }
+
+                                else
+                                {
+
+
+                                    flagCopyArg1TrueArg2False = true;
+                                    string A = buffer_tokens[i+1];
+                                    string B = buffer_tokens[i+2];
+                                    string C = buffer_tokens[i+3].substr(0,virgula_vetor);
+                                    string D= buffer_tokens[i+4]; 
+                                    buffer_completo.push_back(buffer_tokens[i]);                            
+                                    buffer_completo.push_back(A);
+                                    buffer_completo.push_back(B);
+                                    buffer_completo.push_back(C);                            
+                                    buffer_completo.push_back(D);
+                                    i = i+4;
+                                }
                             }
-
-                            i++;
-
+                            
                         }
+                        
+                        else
+                        {
+                            if(virgula != string::npos)
+                            {
+                                
+                                if(vec_arg2_ok != string::npos)
+                                {
+                                    flagCopyArg1FalseArg2True = true;
+                                    string A = buffer_tokens[i+1].substr(0, virgula); //Primeiro token do copy
+                                    string B = buffer_tokens[i+2];
+                                    string D= buffer_tokens[i+3];
+                                    string E = buffer_tokens[i+4];
+                                    buffer_completo.push_back(buffer_tokens[i]);                            
+                                    buffer_completo.push_back(A);
+                                    buffer_completo.push_back(B);
+                                    buffer_completo.push_back(D);
+                                    buffer_completo.push_back(E);
+                                    cout<<"AQUI"<<endl;
+                                    size_t teste_copy = B.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXZ,._+-");
+                                    if(teste_copy != string::npos)
+                                    {                                
+                                        COPY_SEM_ESPACO =true;                                
+                                    }
+
+                                    i++;
+                                }                                    
+                                else
+                                {
+                                    string A = buffer_tokens[i+1].substr(0, virgula); //Primeiro token do copy
+                                    string B = buffer_tokens[i+1].substr(virgula+1,string::npos); //Segundo token do copy
+                                    buffer_completo.push_back(buffer_tokens[i]);                            
+                                    buffer_completo.push_back(A);
+                                    buffer_completo.push_back(B);
+                                    cout<<"AQUI"<<endl;
+                                    size_t teste_copy = B.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXZ,._+-");
+                                    if(teste_copy != string::npos)
+                                    {                                
+                                        COPY_SEM_ESPACO =true;                                
+                                    }
+
+                                    i++;
+                                }
+                                                        
+                            }
+                        }  
                     }
                     else
                     {
@@ -215,10 +295,13 @@ void pre_processamento::leitura(string ArquivoEntrada)
             ////////////////////////////// Imprime Arquivo .pre////////////////////////////////////////////////////////////////
             for(unsigned int i=0;i<buffer_completo.size();++i)
             { 
+                size_t more = buffer_completo[i+2].find_first_of("+");
+
                 for(unsigned int j=0;j<buffer_rotulo.size();++j)
                 {
                     size_t pula = buffer_completo[i].find_first_of(":");
                     size_t space_argumento = buffer_completo[i+2].find_first_of(":");
+
                     if(pula!=string::npos)
                     {
                         string tira_2 = buffer_completo[i].substr(0,pula);
@@ -226,79 +309,131 @@ void pre_processamento::leitura(string ArquivoEntrada)
                         
                         if(tira_2 == buffer_rotulo[j])
                         {
-                            if((buffer_completo[i+1].compare(ADD) ==0)||(buffer_completo[i+1].compare(SUB) ==0)||(buffer_completo[i+1].compare(MULT) ==0)||(buffer_completo[i+1].compare(DIV) ==0)||(buffer_completo[i+1].compare(JMP) ==0)||(buffer_completo[i+1].compare(JMPN) ==0)||(buffer_completo[i+1].compare(JMPZ) ==0)||(buffer_completo[i+1].compare(JMPP) ==0)||(buffer_completo[i+1].compare(LOAD) ==0)||(buffer_completo[i+1].compare(STORE) ==0)||(buffer_completo[i+1].compare(INPUT) ==0)||(buffer_completo[i+1].compare(OUTPUT) ==0))
+                            size_t mais = buffer_completo[i+3].find_first_of("+");
+                            if(mais!=string::npos)
                             {
-                                saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<endl; 
-                                i=i+2;
+                                if((buffer_completo[i+1].compare(ADD) ==0)||(buffer_completo[i+1].compare(SUB) ==0)||(buffer_completo[i+1].compare(MULT) ==0)||(buffer_completo[i+1].compare(DIV) ==0)||(buffer_completo[i+1].compare(JMP) ==0)||(buffer_completo[i+1].compare(JMPN) ==0)||(buffer_completo[i+1].compare(JMPZ) ==0)||(buffer_completo[i+1].compare(JMPP) ==0)||(buffer_completo[i+1].compare(LOAD) ==0)||(buffer_completo[i+1].compare(STORE) ==0)||(buffer_completo[i+1].compare(INPUT) ==0)||(buffer_completo[i+1].compare(OUTPUT) ==0))
+                                {
+                                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<" "<<buffer_completo[i+3]<<" "<<buffer_completo[i+4]<<endl; 
+                                    i=i+4;
+                                }
+
+                                else if(buffer_completo[i+1].compare(COPY) == 0)
+                                {
+                                 
+                                    if(flagCopyArg1TrueArg2False == true)
+                                    {
+                                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<" "<<buffer_completo[i+3]<<" "<<buffer_completo[i+4]<<", "<<buffer_completo[i+5]<<endl;
+                                        i = i+5;
+                                        flagCopyArg1TrueArg2False = false;
+                                    }
+                                    else
+                                    {
+                                        cout<<"AQUI"<<endl;
+                                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<" "<<buffer_completo[i+3]<<" "<<buffer_completo[i+4]<<", "<<buffer_completo[i+5]<<" "<<buffer_completo[i+6]<<" "<<buffer_completo[i+7]<<endl;
+                                        i = i+7;
+                                    }    
+                                }
                             }
-                            
-                            else if((buffer_completo[i+1].compare(SPACE) ==0))
+
+                            else
                             {
+
+                                if((buffer_completo[i+1].compare(ADD) ==0)||(buffer_completo[i+1].compare(SUB) ==0)||(buffer_completo[i+1].compare(MULT) ==0)||(buffer_completo[i+1].compare(DIV) ==0)||(buffer_completo[i+1].compare(JMP) ==0)||(buffer_completo[i+1].compare(JMPN) ==0)||(buffer_completo[i+1].compare(JMPZ) ==0)||(buffer_completo[i+1].compare(JMPP) ==0)||(buffer_completo[i+1].compare(LOAD) ==0)||(buffer_completo[i+1].compare(STORE) ==0)||(buffer_completo[i+1].compare(INPUT) ==0)||(buffer_completo[i+1].compare(OUTPUT) ==0))
+                                {
+                                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<endl; 
+                                    i=i+2;
+                                }
                                 
-                                if((rot_space_comp!= (buffer_rotulo[j+1])) && (buffer_completo[i+2].compare(SECTION)!=0))
+                                else if((buffer_completo[i+1].compare(SPACE) ==0))
+                                {
+                                    
+                                    if((rot_space_comp!= (buffer_rotulo[j+1])) && (buffer_completo[i+2].compare(SECTION)!=0))
+                                    {
+                                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<endl;
+                                        i = i+2;
+                                    }
+
+                                    else
+                                    {
+                                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<endl;
+                                        i=i+1;
+                                    }
+                                }
+
+                                else if ((buffer_completo[i+1].compare(CONST) ==0))
                                 {
                                     saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<endl;
-                                    i = i+2;
+                                    i=i+2;
                                 }
 
-                                else
+                                else if(buffer_completo[i+1].compare(COPY) == 0)
                                 {
-                                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<endl;
-                                    i=i+1;
+                                    if(flagCopyArg1FalseArg2True == true)
+                                    {
+                                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<", "<<buffer_completo[i+4]<<" "<<buffer_completo[i+5]<<" "<<buffer_completo[i+6]<<endl;
+                                        i = i+6;
+                                        flagCopyArg1FalseArg2True = false;
+                                    }
+                                    
+                                    else
+                                    {
+                                        if(COPY_SEM_ESPACO==true)
+                                        {
+                                            saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<","<<buffer_completo[i+3]<<endl;
+                                            i = i+3;
+                                            COPY_SEM_ESPACO = false;
+                                        }
+                                        else
+                                        {
+                                            saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<", "<<buffer_completo[i+4]<<endl;
+                                            i = i+3;
+                                        }
+                                    }                                    
                                 }
-                            }
-
-                            else if ((buffer_completo[i+1].compare(CONST) ==0))
-                            {
-                                saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<endl;
-                                i=i+2;
-                            }
-
-                            else if(buffer_completo[i+1].compare(COPY) == 0)
-                            {
-                                if(COPY_SEM_ESPACO==true)
-                                {
-                                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<","<<buffer_completo[i+3]<<endl;
-                                    i = i+3;
-                                    COPY_SEM_ESPACO = false;
-                                }
-                                else
-                                {
-                                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<"\t"<<buffer_completo[i+2]<<", "<<buffer_completo[i+4]<<endl;
-                                    i = i+3;
-                                }
-                                
                             }
                         }
                     }
                 }
                 
-                if(buffer_completo[i].compare(COPY) == 0)
+                if(more!=string::npos)
                 {
-                    
-                    if(COPY_SEM_ESPACO==true)
+                    if((buffer_completo[i].compare(SECTION) ==0)||(buffer_completo[i].compare(INPUT) ==0)||(buffer_completo[i].compare(ADD) ==0)||(buffer_completo[i].compare(SUB) ==0)||(buffer_completo[i].compare(MULT) ==0)||(buffer_completo[i].compare(DIV) ==0)||(buffer_completo[i].compare(JMP) ==0)||(buffer_completo[i].compare(JMPN) ==0)||(buffer_completo[i].compare(JMPZ) ==0)||(buffer_completo[i].compare(JMPP) ==0)||(buffer_completo[i].compare(LOAD) ==0)||(buffer_completo[i].compare(STORE) ==0)||(buffer_completo[i].compare(OUTPUT) ==0))
                     {
-                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<","<<buffer_completo[i+2]<<endl;
-                        i = i+2;
-                        COPY_SEM_ESPACO = false;
+                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<" "<<buffer_completo[i+2]<<" "<<buffer_completo[i+3]<<endl;
+                        i = i+3;
                     }
-                    else
-                    {
-                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<", "<<buffer_completo[i+3]<<endl;
-                        i = i+2;
-                    }
-
                 }
 
-                else if((buffer_completo[i].compare(SECTION) ==0)||(buffer_completo[i].compare(INPUT) ==0)||(buffer_completo[i].compare(ADD) ==0)||(buffer_completo[i].compare(SUB) ==0)||(buffer_completo[i].compare(MULT) ==0)||(buffer_completo[i].compare(DIV) ==0)||(buffer_completo[i].compare(JMP) ==0)||(buffer_completo[i].compare(JMPN) ==0)||(buffer_completo[i].compare(JMPZ) ==0)||(buffer_completo[i].compare(JMPP) ==0)||(buffer_completo[i].compare(LOAD) ==0)||(buffer_completo[i].compare(STORE) ==0)||(buffer_completo[i].compare(OUTPUT) ==0))
+                else
                 {
-                    saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<endl;
-                    i = i+1;
-                }
+                    if(buffer_completo[i].compare(COPY) == 0)
+                    {
+                        
+                        if(COPY_SEM_ESPACO==true)
+                        {
+                            saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<","<<buffer_completo[i+2]<<endl;
+                            i = i+2;
+                            COPY_SEM_ESPACO = false;
+                        }
+                        else
+                        {
+                            saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<", "<<buffer_completo[i+3]<<endl;
+                            i = i+2;
+                        }
 
-                else if ((buffer_completo[i].compare(STOP) ==0))
-                {
-                    saida_pre<<buffer_completo[i]<<endl;
+                    }
+
+                    else if((buffer_completo[i].compare(SECTION) ==0)||(buffer_completo[i].compare(INPUT) ==0)||(buffer_completo[i].compare(ADD) ==0)||(buffer_completo[i].compare(SUB) ==0)||(buffer_completo[i].compare(MULT) ==0)||(buffer_completo[i].compare(DIV) ==0)||(buffer_completo[i].compare(JMP) ==0)||(buffer_completo[i].compare(JMPN) ==0)||(buffer_completo[i].compare(JMPZ) ==0)||(buffer_completo[i].compare(JMPP) ==0)||(buffer_completo[i].compare(LOAD) ==0)||(buffer_completo[i].compare(STORE) ==0)||(buffer_completo[i].compare(OUTPUT) ==0))
+                    {
+                        saida_pre<<buffer_completo[i]<<"\t"<<buffer_completo[i+1]<<endl;
+                        i = i+1;
+                    }
+
+                    else if ((buffer_completo[i].compare(STOP) ==0))
+                    {
+                        saida_pre<<buffer_completo[i]<<endl;
+                    }
                 }
             }
 
@@ -311,12 +446,12 @@ void pre_processamento::leitura(string ArquivoEntrada)
         ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
             
       
-       /* for(unsigned int i=0;i<buffer_completo.size();++i)
+        for(unsigned int i=0;i<buffer_completo.size();++i)
         {
             //size_t tamanho_token = buffer_completo[i].length();
             //csaida_pre<<tamanho_token<<endl;
             cout<<buffer_completo[i]<<endl; //Imprime na tela 
-        }*/
+        }
         /*for(unsigned int i=0;i<buffer_tokens.size();++i)
         {
             csaida_pre<<buffer_tokens[i]<<endl; //Imprime na tela 

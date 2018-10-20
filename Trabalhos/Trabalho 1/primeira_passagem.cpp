@@ -97,9 +97,11 @@ void primeira_passagem::leitura(string ArquivoEntrada)
 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
                 {
+                
                     /////////////////// Separa os Tokens no caso do COPY////////////////////////////
                     if ((buffer_tokens[i].compare(COPY) == 0))
                     {
+
                         size_t virgula = buffer_tokens[i+1].find(",");
                         if(virgula != string::npos)
                         {
@@ -127,7 +129,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                     
                     if(buffer_tokens[i].compare(SECTION)==0)
                     {
-                        if((buffer_tokens[i+1].compare(TEXT)==1) || (buffer_tokens[i+1].compare(DATA)==1)|| (buffer_tokens[i+1].compare(BSS)==1))
+                        if((buffer_tokens[i+1].compare(TEXT)!=0) && (buffer_tokens[i+1].compare(DATA)!=0) && (buffer_tokens[i+1].compare(BSS)!=0))
                         {
                             ERRO_INVALID_SECTION= true;
                             linha_invalid_section.push_back(Transforma_para_String(nlinha));
@@ -247,6 +249,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
             cout<<"Erro sintático na linha "<<Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
             ERRO_FLAG =true;
         }
+        ERRO_INVALID_SECTION =false;
     }
     
     if(ERRO_FLAG == false)

@@ -38,7 +38,7 @@ private:
 	string linha;
 	string frase, ArquivoEntrada, ArquivoPre, ArquivoOBJ;
 	int nlinha,IF1,linha_equ;
-	bool EQU_FLAG, ERRO_FLAG,COPY_SEM_ESPACO;
+	bool EQU_FLAG, ERRO_FLAG,COPY_SEM_ESPACO,flagCopyArg1TrueArg2False,flagCopyArg1FalseArg2True;
 };
 
 class primeira_passagem
