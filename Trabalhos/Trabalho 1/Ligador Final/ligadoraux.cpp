@@ -53,14 +53,14 @@ int LigadorAux::liga() {
 int LigadorAux::salva() {
 
 	ofstream executavel(_arquivo_principal + ".e");
-	executavel << _str_saida << endl;
+	executavel << _str_saida;
 	
 	return 1;
 }
 
 int LigadorAux::cria_dicio(){
 	
-	for(unsigned int c=0; c<_quantos_arquivos; c++){
+	for(int c=0; c<_quantos_arquivos; c++){
 		ifstream temp(_nomes_arquivos[c]);
 		
 		if(temp.fail()){
