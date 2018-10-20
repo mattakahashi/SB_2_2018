@@ -14,7 +14,6 @@
 
 #include "ligadoraux.h"
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -30,25 +29,23 @@ int main(int argc, char* argv[])
 	
   	// Vetor com nome de todos arquivos passados pelo ponteiro argv
   	vector<string> arquivos(argv+1, argv+argc);
-
-	cout << "Arquivos para ligar: ";
- 	for (vector<string>::iterator it=arquivos.begin(); it!=arquivos.end(); it++)
-    	cout << (*it) << " ";
-    cout << endl;
+	
+	if(arquivos.empty()){
+		cout << "Nao foi possivel ler os arquivos passados.";
+		return 1;
+	}
 
 	LigadorAux L(arquivos);
 	
-	if (!L.liga()) { // Liga os arquivos e verifica erros
-		if(!L.salva()) // Exporta o arquivo executavel e verifica erros
+	if (L.liga()) { // Liga os arquivos e verifica erros
+		if(L.salva()) // Exporta o arquivo executavel e verifica erros
 			return 0;
 		else
 			return 1;
 	}
-	else
-		return 1;
-	
-	return 0;
+	return 1;
 }
+
 
 
 
