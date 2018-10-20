@@ -1,13 +1,13 @@
 /********************************************************************************
 * Arquivo   : modulus.h
 * Autores   : Lucas De Macedo Pinheiro
-			   M
+			  Matheus Takahashi
 
 * Contato	 : lucasmp10@hotmail.com
 
 
 
-* Data      : 2018-10-12
+* Data      : 2018-10-21
 * Objetivo  : Arquivo de cabecalho da classe auxiliar de modulo para o ligador
 * Notas     : Ligador feito para o trabalho de Software Basico do 2/2018 na UnB
 ********************************************************************************/

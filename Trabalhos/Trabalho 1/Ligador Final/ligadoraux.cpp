@@ -1,13 +1,13 @@
 /********************************************************************************
-* Arquivo   : ligadoraux.h
+* Arquivo   : ligadoraux.cpp
 * Autores   : Lucas De Macedo Pinheiro
-               M
+			  Matheus Takahashi
 
 * Contato    : lucasmp10@hotmail.com
 
 
 
-* Data      : 2018-10-12
+* Data      : 2018-10-21
 * Objetivo  : Arquivo de definicoes da classe auxiliar do ligador
 * Notas     : Ligador feito para o trabalho de Software Basico do 2/2018 na UnB
 ********************************************************************************/
