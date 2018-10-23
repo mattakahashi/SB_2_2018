@@ -1,8 +1,8 @@
 /*
 ///////////////////////////////////////////////////////////////////////// Classe Principal////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Recebe 3 Argumentos na Linha de Comando do Linux e chama as outras Classes de Acordo com cada um dos Argumentos
-Por exemplo: .\Macro_Assembler teste.asm -p (Roda o executável Macro_assembler, abre o arquivo teste.asm e monta ele de acordo com "-p", descrito no roteiro do projeto)
+Recebe 2 Argumentos na Linha de Comando do Linux e chama as outras Classes de Acordo com cada um dos Argumentos
+Por exemplo: .\montador teste (Roda o executável montador abre o arquivo teste.asm e monta ele de acordo com a descrição do roteiro do projeto)
 Se entrada for algo diferente que a estrutura citada acima, imprime uma mensagem de erro. Além disso, se o usuário digitar algum tipo de operação que não foi definido, tb da gera uma mensagem de erro
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

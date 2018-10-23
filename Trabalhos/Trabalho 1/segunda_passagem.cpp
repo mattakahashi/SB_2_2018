@@ -1,8 +1,8 @@
 /*
 //////////////////////////////////////////////////////////////// Classe segunda_passagem /////////////////////////////////////////////////////////////////////////////////////////
 
-Classe responsável pelo desenvolvimento das tabelas de uso, tabela de definições e a tradução do código para código objeto. Recebe como argumento o arquivo pré-processado e pós análise
-de erros.
+Classe responsável pelo desenvolvimento das tabelas de uso, tabela de definições e a tradução do código para código objeto. Recebe como argumento o arquivo pré-processado, pós 
+análise de erros.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -91,7 +91,7 @@ void segunda_passagem::leitura(string ArquivoPre)
                 nlinha++;
                 frase = pre->Remover_Comentarios(frase); // Retira comentários das linhas do arquivo
                 frase = pre->NaoSensivelAoCaso(frase); // Transforma todas strings para Maiuscula
-                //buffer_tokens = pre->pegar_tokens(frase); // Pega os tokens de 1 linha
+                buffer_tokens = pre->pegar_tokens(frase); // Pega os tokens de 1 linha
 
                 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)

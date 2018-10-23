@@ -1,9 +1,7 @@
 /*
-//////////////////////////////////////////////////////////////// Classe pre_processamento /////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////// Classe primeira_passagem /////////////////////////////////////////////////////////////////////////////////////////
 
-Classe responsável pelo pre-processamento do arquivo .asm. Recebe como argumento o nome deste arquivo, o abre e faz a leitura de linha por linha. Retira os comentários do arquivo,
-deixa todos caracteres em letra maiúscula (Montador não sensível ao caso), separa os caracteres em tokens, detecta se há alguma diretiva EQU e IF e as trata, detecta a diretiva
-MACRO e substitui seu código ao há chamada dessa diretiva.
+Classe responsável pelo detecção de erros do arquivo .asm e a criação do arquivo pre-processado. 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +36,7 @@ primeira_passagem::~primeira_passagem()
  
 }
 
-// Método de Leitura do arquivo .asm, manipulação deste arquivo e tratamento das diretivas IF e EQU
+// Método de Leitura do arquivo .asm e detecção de erros no processo de montagem do código.
 void primeira_passagem::leitura(string ArquivoEntrada)
 {
     ////////////////////////////////////// Declaração de Variáveis /////////////////////////////////////////////////////////
@@ -99,9 +97,11 @@ void primeira_passagem::leitura(string ArquivoEntrada)
 
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
                 {
-                    /////////////////// Separa os Tokens no caso do COPY//////////////////////////// Ainda não trata casos do COPY estar escrito diferente do que foi especificado
+                
+                    /////////////////// Separa os Tokens no caso do COPY////////////////////////////
                     if ((buffer_tokens[i].compare(COPY) == 0))
                     {
+
                         size_t virgula = buffer_tokens[i+1].find(",");
                         if(virgula != string::npos)
                         {
@@ -115,7 +115,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                             if(teste_copy != string::npos)
                             {                                
                                 ERRO_COPY =true;    
-                                linha_cop.push_back(pre->Transforma_para_String(nlinha));                            
+                                linha_cop.push_back(Transforma_para_String(nlinha));                            
                             }
 
                             i++;
@@ -129,12 +129,14 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                     
                     if(buffer_tokens[i].compare(SECTION)==0)
                     {
-                        if((buffer_tokens[i+1].compare(TEXT)==1) || (buffer_tokens[i+1].compare(DATA)==1)|| (buffer_tokens[i+1].compare(BSS)==1))
+                        if((buffer_tokens[i+1].compare(TEXT)!=0) && (buffer_tokens[i+1].compare(DATA)!=0) && (buffer_tokens[i+1].compare(BSS)!=0))
                         {
                             ERRO_INVALID_SECTION= true;
-                            linha_invalid_section.push_back(pre->Transforma_para_String(nlinha));
+                            linha_invalid_section.push_back(Transforma_para_String(nlinha));
                         }
                     } 
+
+                    
                 }
             }
 
@@ -179,6 +181,19 @@ void primeira_passagem::leitura(string ArquivoEntrada)
 
             }
         }
+        //////////////////////// Troca valores da diretiva CONST/////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        for(unsigned int i = 0; i<buffer_completo.size();i++)
+        {
+            if(buffer_completo[i].compare(CONST)==0)
+            {
+                size_t hexa = buffer_completo[i+1].find_first_of("X");
+                if(hexa!=string::npos)
+                {
+                    buffer_completo[i+1]= Transforma_para_String(converte_hexa((buffer_completo[i+1])));
+                }
+            }
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
         //cout<<linha_text<<endl;
@@ -221,7 +236,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
     {
         for(unsigned int i; i<linha_cop.size();i++)
         {
-            cout<<"Erro semântico na linha "<<pre->Transforma_para_int(linha_cop[i])<<". Erro na chamada a instrução COPY."<<endl;
+            cout<<"Erro semântico na linha "<<Transforma_para_int(linha_cop[i])<<". Erro na chamada a instrução COPY."<<endl;
             ERRO_FLAG =true;
         }
         
@@ -231,9 +246,10 @@ void primeira_passagem::leitura(string ArquivoEntrada)
     {
         for(unsigned int i; i<linha_invalid_section.size();i++)
         {
-            cout<<"Erro sintático na linha "<<pre->Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
+            cout<<"Erro sintático na linha "<<Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
             ERRO_FLAG =true;
         }
+        ERRO_INVALID_SECTION =false;
     }
     
     if(ERRO_FLAG == false)
@@ -243,4 +259,26 @@ void primeira_passagem::leitura(string ArquivoEntrada)
         segunda->leitura(ArquivoPre);
     }
     //cout<<linha_data<<endl;
+}
+
+int primeira_passagem::converte_hexa(string hexa)
+{
+    int aux;
+    stringstream ss;
+    ss<<hexa;
+    ss>>std::hex>>aux;
+    return(aux);
+}
+//Método para transformar int para string
+string primeira_passagem::Transforma_para_String(int numero)
+{
+     ostringstream ss;
+     ss << numero;
+
+     return ss.str();
+}
+// Método para transformar string para int
+int primeira_passagem::Transforma_para_int(string vetor)
+{
+    return(atoi(vetor.c_str()));
 }

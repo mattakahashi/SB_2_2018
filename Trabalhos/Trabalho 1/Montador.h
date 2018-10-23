@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 #include <vector>
 #include <string>
@@ -23,16 +24,12 @@ public:
 
 	pre_processamento(); // Chama Construtor da Classe
 	~pre_processamento(); // Destrutor da Classe
-	void leitura(string ArquivoEntrada);
-	vector<string> pegar_tokens(string linha);
-	map<string,int> pegaLinha(string linha, int numero_linha);
+	void leitura(string ArquivoEntrada);// Método responsável pela leitura do arquivo .asm
+	vector<string> pegar_tokens(string linha);// Método responsável pela separação dos tokens a partir de cada linha do arquivo
+	map<string,int> pegaLinha(string linha, int numero_linha);// Método que retorna a linha em que cada token foi referenciado
 	string Remover_Comentarios(string comment); // Chama Método Remover_Comentarios
-	string NaoSensivelAoCaso(string frase);
-	string Transforma_para_String(int numero);
-	int Transforma_para_int(string vetor);
-	int Pega_linha(int teste);
+	string NaoSensivelAoCaso(string frase);// Método que transforma todos caracteres do arquivo para somente um tipo de case
 	
-
 	
 	
 private:
@@ -41,7 +38,7 @@ private:
 	string linha;
 	string frase, ArquivoEntrada, ArquivoPre, ArquivoOBJ;
 	int nlinha,IF1,linha_equ;
-	bool EQU_FLAG, ERRO_FLAG,COPY_SEM_ESPACO;
+	bool EQU_FLAG, ERRO_FLAG,COPY_SEM_ESPACO,flagCopyArg1TrueArg2False,flagCopyArg1FalseArg2True;
 };
 
 class primeira_passagem
@@ -50,7 +47,12 @@ public:
 
 	primeira_passagem(); // Chama Construtor da Classe
 	~primeira_passagem(); // Destrutor da Classe
-	void leitura(string ArquivoEntrada);
+	void leitura(string ArquivoEntrada); // Método responsável pela leitura do arquivo .asm e tratamento de erros no processo de montagem
+	int converte_hexa(string hexa); // Método que transforma a CONST escrita em hexadecimal para decimal
+	string Transforma_para_String(int numero);// Método que transforma um int para string
+	int Transforma_para_int(string vetor);// Método que transforma uma string para int
+	
+
 
 	
 	
@@ -70,7 +72,7 @@ public:
 
 	segunda_passagem(); // Chama Construtor da Classe
 	~segunda_passagem(); // Destrutor da Classe
-	void leitura(string ArquivoPre);
+	void leitura(string ArquivoPre);// Método responsável pela leitura do arquivo .pre e construção das tabelas de uso, definições e montagem do código objeto 
 
 	
 	
