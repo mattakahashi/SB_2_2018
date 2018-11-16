@@ -983,7 +983,7 @@ void traducao::leitura(string ArquivoEntrada)
             saida<<"zero:"<<endl;
             saida<<"\tadd eax,0x30\n\tmov [ebp-12],eax\n\tinc edi\n\tmov [ebp-16],edi\n\tjmp inicio_imprime"<<endl;
             saida<<"inicio_imprime:"<<endl;
-            saida<<"\tmov byte [ebp-12+edi],0ah\n\tmov esi,edi"<<endl;
+            saida<<"\tmov esi,edi"<<endl;
             saida<<"imprime_EI:"<<endl;
             saida<<"\tmov eax,4\n\tmov ebx,1\n\tmov ecx,ebp\n\tsub ecx,12\n\tadd ecx,edi\n\tmov edx,1\n\tint 80h\n\tcmp edi,0\n\tje fim_imprime\n\tdec edi\n\tjmp imprime_EI"<<endl;
             saida<<"fim_imprime:"<<endl;
