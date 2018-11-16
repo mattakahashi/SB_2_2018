@@ -95,31 +95,27 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                 buffer_tokens = pre->pegar_tokens(frase);
                 tabela_tokens = pre->pegaLinha(frase,nlinha);
 
+                size_t copy = frase.find("COPY");
+                if(copy!=string::npos)
+                {
+                    size_t copy_certo = frase.find(", ");
+                    if(copy_certo == string::npos)
+                    {
+                        ERRO_FLAG =true;
+                        ERRO_COPY =true;    
+                        linha_cop.push_back(pre->Transforma_para_String(nlinha)); 
+                    }
+                }
+                
                 for(unsigned int i=0;i<buffer_tokens.size();i++)
                 {
                 
-                    /////////////////// Separa os Tokens no caso do COPY////////////////////////////
-                    if ((buffer_tokens[i].compare(COPY) == 0))
+                    if(buffer_tokens[i].compare(SECTION)==0)
                     {
-
-                        size_t virgula = buffer_tokens[i+1].find(",");
-                        if(virgula != string::npos)
+                        if((buffer_tokens[i+1].compare(TEXT)!=0) && (buffer_tokens[i+1].compare(DATA)!=0) && (buffer_tokens[i+1].compare(BSS)!=0))
                         {
-                            string A = buffer_tokens[i+1].substr(0, virgula); //Primeiro token do copy
-                            string B = buffer_tokens[i+1].substr(virgula+1,string::npos); //Segundo token do copy
-                            buffer_completo.push_back(buffer_tokens[i]);                            
-                            buffer_completo.push_back(A);
-                            buffer_completo.push_back(B);
-
-                            size_t teste_copy = B.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXZ,._");
-                            if(teste_copy != string::npos)
-                            {                                
-                                ERRO_COPY =true;    
-                                linha_cop.push_back(Transforma_para_String(nlinha));                            
-                            }
-
-                            i++;
-
+                            ERRO_INVALID_SECTION= true;
+                            linha_invalid_section.push_back(pre->Transforma_para_String(nlinha));
                         }
                     }
                     else
@@ -127,14 +123,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
                         buffer_completo.push_back(buffer_tokens[i]);    
                     } 
                     
-                    if(buffer_tokens[i].compare(SECTION)==0)
-                    {
-                        if((buffer_tokens[i+1].compare(TEXT)!=0) && (buffer_tokens[i+1].compare(DATA)!=0) && (buffer_tokens[i+1].compare(BSS)!=0))
-                        {
-                            ERRO_INVALID_SECTION= true;
-                            linha_invalid_section.push_back(Transforma_para_String(nlinha));
-                        }
-                    } 
+                     
 
                     
                 }
@@ -181,34 +170,6 @@ void primeira_passagem::leitura(string ArquivoEntrada)
 
             }
         }
-        //////////////////////// Troca valores da diretiva CONST/////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        for(unsigned int i = 0; i<buffer_completo.size();i++)
-        {
-            if(buffer_completo[i].compare(CONST)==0)
-            {
-                size_t hexa = buffer_completo[i+1].find_first_of("X");
-                if(hexa!=string::npos)
-                {
-                    buffer_completo[i+1]= Transforma_para_String(converte_hexa((buffer_completo[i+1])));
-                }
-            }
-        }
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////// Imprime na tela para debug//////////////////////////////////////////////////////////////////////////
-        //cout<<linha_text<<endl;
-        //cout<<linha_data<<endl;
-        //cout<<linha_bss<<endl;
-        /*for(unsigned int i=0;i<buffer_completo.size();++i)
-        {
-            //size_t tamanho_token = buffer_completo[i].length();
-            //csaida_pre<<tamanho_token<<endl;
-            cout<<buffer_completo[i]<<endl; //Imprime na tela 
-        }*/
-        /*for(unsigned int i=0;i<buffer_tokens.size();++i)
-        {
-            cout<<buffer_tokens[i]<<endl; //Imprime na tela 
-        }*/
     }
 
     if(ERRO_NO_TEXT == true)
@@ -217,12 +178,6 @@ void primeira_passagem::leitura(string ArquivoEntrada)
         ERRO_FLAG =true;
     }
 
-    if(ERRO_NO_DATA == true)
-    {
-        cout<<"Erro semântico. Código sem SECTION DATA."<<endl;
-        ERRO_FLAG =true;
-        
-    }
     if(ERRO_NO_DATA == false && ERRO_NO_TEXT == false)
     {
         if(((linha_text>linha_data) && linha_data >=1) || ((linha_text>linha_bss) && linha_bss >=1) )
@@ -236,7 +191,7 @@ void primeira_passagem::leitura(string ArquivoEntrada)
     {
         for(unsigned int i; i<linha_cop.size();i++)
         {
-            cout<<"Erro semântico na linha "<<Transforma_para_int(linha_cop[i])<<". Erro na chamada a instrução COPY."<<endl;
+            cout<<"Erro semântico na linha "<<pre->Transforma_para_int(linha_cop[i])<<". Erro na chamada a instrução COPY."<<endl;
             ERRO_FLAG =true;
         }
         
@@ -246,39 +201,18 @@ void primeira_passagem::leitura(string ArquivoEntrada)
     {
         for(unsigned int i; i<linha_invalid_section.size();i++)
         {
-            cout<<"Erro sintático na linha "<<Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
+            cout<<"Erro sintático na linha "<<pre->Transforma_para_int(linha_invalid_section[i])<<". Seção inválida."<<endl;
             ERRO_FLAG =true;
         }
         ERRO_INVALID_SECTION =false;
     }
-    
+    //cout<<linha_data<<endl;
     if(ERRO_FLAG == false)
     {
         segunda_passagem* segunda = new segunda_passagem();
         
-        segunda->leitura(ArquivoPre);
+        segunda->montar(ArquivoEntrada);
     }
-    //cout<<linha_data<<endl;
 }
 
-int primeira_passagem::converte_hexa(string hexa)
-{
-    int aux;
-    stringstream ss;
-    ss<<hexa;
-    ss>>std::hex>>aux;
-    return(aux);
-}
-//Método para transformar int para string
-string primeira_passagem::Transforma_para_String(int numero)
-{
-     ostringstream ss;
-     ss << numero;
 
-     return ss.str();
-}
-// Método para transformar string para int
-int primeira_passagem::Transforma_para_int(string vetor)
-{
-    return(atoi(vetor.c_str()));
-}

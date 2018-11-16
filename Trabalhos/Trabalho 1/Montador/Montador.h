@@ -29,16 +29,18 @@ public:
 	map<string,int> pegaLinha(string linha, int numero_linha);// Método que retorna a linha em que cada token foi referenciado
 	string Remover_Comentarios(string comment); // Chama Método Remover_Comentarios
 	string NaoSensivelAoCaso(string frase);// Método que transforma todos caracteres do arquivo para somente um tipo de case
+	string Transforma_para_String(int numero);// Método que transforma um int para string
+	int Transforma_para_int(string vetor);// Método que transforma uma string para int
 	
 	
 	
 private:
 	map<string,int>tabela_tokens;
-	vector<string>  buffer_tokens, buffer_rotulo, Nome_Rot_EQU, Valor_EQU, buffer_completo;
+	vector<string>  buffer_tokens, buffer_rotulo, Nome_Rot_EQU, Valor_EQU, buffer_completo,linha_equ,linha_equ1,linha_if;
 	string linha;
 	string frase, ArquivoEntrada, ArquivoPre, ArquivoOBJ;
-	int nlinha,IF1,linha_equ;
-	bool EQU_FLAG, ERRO_FLAG,COPY_SEM_ESPACO,flagCopyArg1TrueArg2False,flagCopyArg1FalseArg2True;
+	int nlinha,IF1;
+	bool ERRO_FLAG_1, ERRO_FLAG,ERRO_FLAG_IF,ERRO_FLAG_EQU;
 };
 
 class primeira_passagem
@@ -48,9 +50,9 @@ public:
 	primeira_passagem(); // Chama Construtor da Classe
 	~primeira_passagem(); // Destrutor da Classe
 	void leitura(string ArquivoEntrada); // Método responsável pela leitura do arquivo .asm e tratamento de erros no processo de montagem
-	int converte_hexa(string hexa); // Método que transforma a CONST escrita em hexadecimal para decimal
-	string Transforma_para_String(int numero);// Método que transforma um int para string
-	int Transforma_para_int(string vetor);// Método que transforma uma string para int
+	
+	//string Transforma_para_String(int numero);// Método que transforma um int para string
+	//int Transforma_para_int(string vetor);// Método que transforma uma string para int
 	
 
 
@@ -72,14 +74,15 @@ public:
 
 	segunda_passagem(); // Chama Construtor da Classe
 	~segunda_passagem(); // Destrutor da Classe
-	void leitura(string ArquivoPre);// Método responsável pela leitura do arquivo .pre e construção das tabelas de uso, definições e montagem do código objeto 
+	void montar(string ArquivoEntrada);// Método responsável pela leitura do arquivo .pre e construção das tabelas de uso, definições e montagem do código objeto
+	int converte_hexa(string hexa); // Método que transforma a CONST escrita em hexadecimal para decimal 
 
 	
 	
 private:
-	vector<string>  buffer_tokens, buffer_rotulo, Nome_Rot_EQU, Valor_EQU, buffer_completo;
+	vector<string>  buffer_tokens, buffer_rotulo, Nome_Rot_EQU, Valor_EQU, buffer_completo,buffer_auxiliar;
 	string linha;
 	string frase, ArquivoEntrada, ArquivoPre, ArquivoOBJ;
 	int nlinha,IF1,linha_equ;
-	bool EQU_FLAG, ERRO_FLAG;
+	bool EQU_FLAG, ERRO_FLAG,flag_com_modulo;
 };

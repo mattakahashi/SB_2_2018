@@ -1,0 +1,28 @@
+HU: EQU 1 
+;equ 2 9
+SEction TEXT
+if HU 
+MULT N
+STORE N
+;s: Copy N, ONe
+INPUT N
+;s: Copy N + 1, ONe
+LOAD N
+FAT: SUB ONE; hsuaiohsoauihsuaoihsuaohsuoahsa
+;S: Copy N + 1, ONe + 2
+ADD	HU
+JMPZ FIM
+;s: Copy N, ONe + 2
+STORE AUX 
+LOAD AUX
+;s: Copy N, ONe
+JMP FAT
+COPY	N, ONE
+FIM: OUTPUT N
+STOP
+SECTION BSS
+TESTE: SPACE 1
+SECTION DATA
+AUX: SPACE 7
+N: SPACE
+ONE: CONST 0xD
