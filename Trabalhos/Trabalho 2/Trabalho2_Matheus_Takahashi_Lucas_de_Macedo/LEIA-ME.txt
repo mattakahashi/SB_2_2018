@@ -1,0 +1,62 @@
+**********************************************************************
+**********************************************************************
+    
+    UNIVERSIDADE DE BRASÍLIA - UNB
+    
+    TRABALHO 2 DE SOFTWARE BÁSICO - TRADUTOR
+ 
+    Alunos:    
+ 
+    MATHEUS KAZUHIRO TAKAHASHI takahashi.matheus@gmail.com - 10/0115900
+    LUCAS DE MACEDO PINHEIRO   lucasmp10@hotmail.com - 
+    
+    
+**********************************************************************
+**********************************************************************
+ 
+    O programa foi feito na linguagem C++  e foi compilado em um ambiente no Linux, utilizando o Ubuntu.
+ 
+    Sistema Operacional: Ubuntu/Linux
+    IDE de Desenvolvimento: Sublime Text
+    Compilado diretamente no terminal do Linux.
+    
+    As instruções para compilação utilizadas foram as seguintes:
+    
+Para o programa foi utilizado C++11:
+ 
+	g++ -std=c++11 -Wall -c -o traducao.o traducao.cpp
+	g++ -std=c++11 -Wall -c -o Tradutor.o Tradutor.cpp
+	g++ -std=c++11 -Wall -o Tradutor traducao.o Tradutor.o
+ 
+ou utilizar o Makefile com a diretiva:
+ 
+make
+ 
+----------------------------------------------------------------------------------------------
+ 
+Para executar (exemplo):
+ 
+./Tradutor exemplo.asm
+ 
+onde,
+    exemplo.asm -> arquivo de entrada
+ 
+-----------------------------------------------------------------------------------------------
+ 
+Para compilar arquivo IA-32 gerado:
+
+nasm -f elf -o exemplo.o exemplo.s
+ld -m elf_i386 -o exemplo exemplo.o
+
+-----------------------------------------------------------------------------------------------
+
+Para executar Arquivo IA-32:
+
+./exemplo
+
+-----------------------------------------------------------------------------------------------
+
+ Obs: Todas funções implementadas.
+ 
+ 
+
