@@ -8,11 +8,11 @@
     Alunos:    
  
     MATHEUS KAZUHIRO TAKAHASHI takahashi.matheus@gmail.com - 10/0115900
-    LUCAS DE MACEDO PINHEIRO   lucasmp10@hotmail.com - 
+    LUCAS DE MACEDO PINHEIRO   lucasmp10@hotmail.com - 13/0154679
     
     
 **********************************************************************
-**************************************************************takahashi.matheus@gmail.com********
+**********************************************************************
  
     O programa foi feito na linguagem C++  e foi compilado em um ambiente no Linux, utilizando o Ubuntu.
  
